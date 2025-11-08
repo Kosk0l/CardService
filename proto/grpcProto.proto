@@ -5,7 +5,7 @@ package grpcProto;
 option go_package = "proto/grpcProto;grpcProto";
 
 service CardService {
-    rpc CreateCard(CreateCardRequest) returns (CardResponse);
+    rpc CreateCard (CreateCardRequest) returns (CardResponse);
     rpc UpdateCard (UpdateCardRequest) returns (CardResponse);
     rpc DeleteCard (DeleteCardRequest) returns (DeleteCardResponse);
     rpc GetCard (GetCardRequest) returns (CardResponse);
@@ -41,10 +41,10 @@ message GetCardRequest {
 
 // Получить много карточек; Серверу
 message ListCardRequest {
-    int64 cardid = 1;
+    int64 deckid = 3;
 }
 
-// Получить карточку; Клиенту
+// Отправить карточку; Клиенту
 message CardResponse {
     int64 cardid = 1;
     int64 userid = 2;
