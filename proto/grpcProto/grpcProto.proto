@@ -1,0 +1,59 @@
+syntax = "proto3";
+
+package grpcProto;
+
+option go_package = "proto/grpcProto;grpcProto";
+
+service CardService {
+    rpc CreateCard(CreateCardRequest) returns (CardResponse);
+    rpc UpdateCard (UpdateCardRequest) returns (CardResponse);
+    rpc DeleteCard (DeleteCardRequest) returns (DeleteCardResponse);
+    rpc GetCard (GetCardRequest) returns (CardResponse);
+
+    // Клиент просит список карточек, сервер шлёт их одну за другой
+    rpc ListCard (ListCardRequest) returns (stream CardResponse);
+}
+
+// Создать Карточку; Серверу
+message CreateCardRequest {
+    int64 userid = 2;
+    int64 deckid = 3;
+    string text1 = 4;
+    string text2 = 5;
+}
+
+// обновить карточку; Серверу
+message UpdateCardRequest {
+    int64 cardid = 1;
+    string text1 = 4;
+    string text2 = 5;
+}
+
+// Удалить карточку; Серверу
+message DeleteCardRequest {
+    int64 cardid = 1;
+}
+
+// Получить карточку; Серверу
+message GetCardRequest {
+    int64 cardid = 1;
+}
+
+// Получить много карточек; Серверу
+message ListCardRequest {
+    int64 cardid = 1;
+}
+
+// Получить карточку; Клиенту
+message CardResponse {
+    int64 cardid = 1;
+    int64 userid = 2;
+    int64 deckid = 3;
+    string text1 = 4;
+    string text2 = 5;
+}
+
+// Получить ответ на Удаление карточки; Клиенту
+message DeleteCardResponse {
+    string success = 1;
+}
