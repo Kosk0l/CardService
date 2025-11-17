@@ -1,4 +1,5 @@
 package grpc
+// Handlers - grpc
 
 import (
 	"CardService/proto/grpcProto"
@@ -13,25 +14,35 @@ type Server struct {
 
 func (s *Server) GetCard(ctx context.Context, req *grpcProto.GetCardRequest) (*grpcProto.CardResponse, error) {
 
+	//TODO: запуск бизнес-логики
+
 	return nil ,nil
 }
 
 func (s *Server) CreateCard(ctx context.Context, req *grpcProto.CreateCardRequest) (*grpcProto.CardResponse, error) {
+
+	//TODO: запуск бизнес-логики
 
 	return nil, nil	
 }
 
 func (s *Server) UpdateCard(ctx context.Context, req *grpcProto.UpdateCardRequest) (*grpcProto.CardResponse, error) {
 
+	//TODO: запуск бизнес-логики
+
 	return nil, nil
 }
 
 func (s *Server) DeleteCard(ctx context.Context, req *grpcProto.DeleteCardRequest) (*grpcProto.DeleteCardResponse, error) {
 
+	//TODO: запуск бизнес-логики
+
 	return nil, nil
 }
 
 func (s *Server) ListCard(req *grpcProto.ListCardRequest, stream grpcProto.CardService_ListCardServer) error {
+
+	//TODO: запуск бизнес-логики
 
 	return nil
 }

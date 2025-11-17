@@ -1,4 +1,5 @@
 package storage
+// Storage
 
 import (
 	"CardService/proto/grpcProto"
@@ -10,6 +11,8 @@ import (
 )
 
 //===================================================================================================================//
+
+// TODO: СДЕЛАТЬ В CLEAN ARHITECTURE
 
 func (p *Postgres) CreateCardPG(ctx context.Context, req *grpcProto.CreateCardRequest) (*grpcProto.CardResponse, error) {
 	query := `
