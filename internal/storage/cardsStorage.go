@@ -2,7 +2,6 @@ package storage
 // Storage
 
 import (
-	"CardService/proto/grpcProto"
 	"context"
 	"errors"
 	"fmt"
@@ -27,7 +26,7 @@ func (p *Postgres) CreateCardPG(ctx context.Context, userid int64, deckid int64,
 	
 	return cardid, nil 
 	// Вернем только id новой карточки, 
-	// остальную часть структуры ответа взять в слоях выше
+	// Остальную часть структуры ответа взять в слоях выше
 }
 
 
@@ -52,7 +51,7 @@ func (p *Postgres) UpdadeCardPG(ctx context.Context, cardid int64, text1 string,
 	}
 
 	return userid, deckid, nil
-	// Остальное часть структу взять в слоях выше
+	// Остальную часть структуры ответа взять в слоях выше
 }
 
 
@@ -80,23 +79,22 @@ func (p *Postgres) GetCardPG(ctx context.Context, cardid int64) (int64, int64, s
 	// Взять id в слоях выше
 }
 
-func (p *Postgres) DeleteCardPG(ctx context.Context, req *grpcProto.DeleteCardRequest) (*grpcProto.DeleteCardResponse, error) {
+// Обратиться к Бд для удаления карточки по cardid, возвращаем string ответ
+func (p *Postgres) DeleteCardPG(ctx context.Context, cardid int64) (string, error) {
 	query := `
 		DELETE FROM cards WHERE card_id = $1;
 	`
 
-	cmd, err := p.pool.Exec(ctx, query, req.Cardid)
+	cmd, err := p.pool.Exec(ctx, query, cardid)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get the card: %w", err)
+		return "", fmt.Errorf("failed to get the card: %w", err)
 	}
 	// Проверка, что карточка действительно удалена
 	if cmd.RowsAffected() == 0 {
-		return nil, fmt.Errorf("card not found with id %d", req.Cardid)
+		return "", fmt.Errorf("card not found with id %d", cardid)
 	}
 
-	return &grpcProto.DeleteCardResponse{
-		Success: "success",
-	}, nil
+	return "success", nil
 }
 
 //===================================================================================================================//
