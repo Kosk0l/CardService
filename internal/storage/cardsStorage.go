@@ -30,8 +30,8 @@ func (p *Postgres) CreateCardPG(ctx context.Context, userid int64, deckid int64,
 }
 
 
-// Обратиться к Бд собновлением карточки по cardid, возвращаем deckid, userid
-func (p *Postgres) UpdadeCardPG(ctx context.Context, cardid int64, text1 string, text2 string) (int64, int64, error) {
+// Обратиться к Бд собновлением карточки по cardid
+func (p *Postgres) UpdadeCardPG(ctx context.Context, cardid int64, text1 string, text2 string) (int64, int64, int64, string, string, error) {
 	query := `
 		UPDATE cards
 		SET text1 = $1, text2 = $2 
@@ -45,29 +45,28 @@ func (p *Postgres) UpdadeCardPG(ctx context.Context, cardid int64, text1 string,
 	err := p.pool.QueryRow(ctx, query, text1, text2, cardid).Scan(&userid, &deckid)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			return 0, 0, fmt.Errorf("card not found with id %d", cardid)
+			return 0, 0, 0, "", "", fmt.Errorf("card not found with id %d", cardid)
 		}
-		return 0, 0, fmt.Errorf("failed to update the card: %w", err)
+		return 0, 0, 0, "", "", fmt.Errorf("failed to update the card: %w", err)
 	}
 
-	return userid, deckid, nil
-	// Остальную часть структуры ответа взять в слоях выше
+	return cardid, userid, deckid, text1, text2, nil
 }
 
 
 // Получить данные карточки по id
 func (p *Postgres) GetCardPG(ctx context.Context, cardid int64) (int64, int64, string, string, error) {
 	query := `
-		SELECT deck_id, user_id, text1, text2 FROM cards WHERE card_id = $1;
+		SELECT user_id, deck_id, text1, text2 FROM cards WHERE card_id = $1;
 	`
 
 	var (
-		deckid int64
 		userid int64
+		deckid int64
 		text1 string
 		text2 string
 	)
-	err := p.pool.QueryRow(ctx, query, cardid).Scan(&deckid, &userid, &text1, &text2)
+	err := p.pool.QueryRow(ctx, query, cardid).Scan(&userid, &deckid, &text1, &text2)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			return 0, 0, "", "", fmt.Errorf("card not found with id %d", cardid)
