@@ -12,58 +12,52 @@ import (
 
 //===================================================================================================================//
 
-// TODO: СДЕЛАТЬ В CLEAN ARHITECTURE
-
-func (p *Postgres) CreateCardPG(ctx context.Context, req *grpcProto.CreateCardRequest) (*grpcProto.CardResponse, error) {
+// Обратиться к БД для создания новой карточки
+func (p *Postgres) CreateCardPG(ctx context.Context, userid int64, deckid int64, text1 string, text2 string) (int64, error) {
 	query := `
 		INSERT INTO cards (user_id, deck_id, text1, text2) VALUES
 		($1, $2, $3, $4)
 		RETURNING card_id;
 	`
 	var cardid int64
-	err := p.pool.QueryRow(ctx, query, req.Userid, req.Deckid, req.Text1, req.Text2).Scan(&cardid)
+	err := p.pool.QueryRow(ctx, query, userid, deckid, text1, text2).Scan(&cardid)
 	if err != nil {
-		return nil, fmt.Errorf("failed to сreate new card: %w", err)
+		return cardid, fmt.Errorf("failed to сreate new card: %w", err)
 	}
 	
-	return &grpcProto.CardResponse{
-		Cardid: cardid,
-		Deckid: req.Deckid,
-		Userid: req.Userid,
-		Text1: req.Text1,
-		Text2: req.Text2,
-	}, nil
+	return cardid, nil 
+	// Вернем только id новой карточки, 
+	// остальную часть структуры ответа взять в слоях выше
 }
 
-func (p *Postgres) UpdadeCardPG(ctx context.Context, req *grpcProto.UpdateCardRequest) (*grpcProto.CardResponse, error) {
+
+// Обратиться к Бд собновлением карточки по cardid, возвращаем deckid, userid
+func (p *Postgres) UpdadeCardPG(ctx context.Context, cardid int64, text1 string, text2 string) (int64, int64, error) {
 	query := `
 		UPDATE cards
 		SET text1 = $1, text2 = $2 
 		WHERE card_id = $3
-		RETURNING deck_id, user_id;
+		RETURNING user_id, deck_id;
 	`
 	var (
-		deckid int64
 		userid int64
+		deckid int64
 	)
-	err := p.pool.QueryRow(ctx, query, req.Text1, req.Text2, req.Cardid).Scan(&deckid, &userid)
+	err := p.pool.QueryRow(ctx, query, text1, text2, cardid).Scan(&userid, &deckid)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			return nil, fmt.Errorf("card not found with id %d", req.Cardid)
+			return 0, 0, fmt.Errorf("card not found with id %d", cardid)
 		}
-		return nil, fmt.Errorf("failed to update the card: %w", err)
+		return 0, 0, fmt.Errorf("failed to update the card: %w", err)
 	}
 
-	return &grpcProto.CardResponse{
-		Cardid: req.Cardid,
-		Userid: userid,
-		Deckid: deckid,
-		Text1: req.Text1,
-		Text2: req.Text2,
-	}, nil
+	return userid, deckid, nil
+	// Остальное часть структу взять в слоях выше
 }
 
-func (p *Postgres) GetCardPG(ctx context.Context, req *grpcProto.GetCardRequest) (*grpcProto.CardResponse, error) {
+
+// Получить данные карточки по id
+func (p *Postgres) GetCardPG(ctx context.Context, cardid int64) (int64, int64, string, string, error) {
 	query := `
 		SELECT deck_id, user_id, text1, text2 FROM cards WHERE card_id = $1;
 	`
@@ -74,21 +68,16 @@ func (p *Postgres) GetCardPG(ctx context.Context, req *grpcProto.GetCardRequest)
 		text1 string
 		text2 string
 	)
-	err := p.pool.QueryRow(ctx, query, req.Cardid).Scan(&deckid, &userid, &text1, &text2)
+	err := p.pool.QueryRow(ctx, query, cardid).Scan(&deckid, &userid, &text1, &text2)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			return nil, fmt.Errorf("card not found with id %d", req.Cardid)
+			return 0, 0, "", "", fmt.Errorf("card not found with id %d", cardid)
 		}
-		return nil, fmt.Errorf("failed to get the card: %w", err)
+		return 0,0, "", "", fmt.Errorf("failed to get the card: %w", err)
 	}
 
-	return &grpcProto.CardResponse{
-		Cardid: req.Cardid,
-		Deckid: deckid,
-		Userid: userid,
-		Text1: text1,
-		Text2: text2,
-	}, nil
+	return userid, deckid, text1, text2, nil
+	// Взять id в слоях выше
 }
 
 func (p *Postgres) DeleteCardPG(ctx context.Context, req *grpcProto.DeleteCardRequest) (*grpcProto.DeleteCardResponse, error) {
