@@ -6,49 +6,45 @@ import (
 	"CardService/internal/models"
 	"context"
 )
-type CardsService struct {
-	getCard 	GetCard
-	createCard 	CreateCard
-	updateCard 	UpdateCard
-	deleteCard 	DeleteCard
+
+// Паттер Инверсии зависимостей
+// Абстракция, принадлежащая высокому уровню 
+type CardRepository interface {
+	CreateCard(ctx context.Context, card models.Card) (int64, error)
+    GetCard(ctx context.Context, cardID int64) (models.Card, error)
+    UpdateCard(ctx context.Context, card models.Card) error
+    DeleteCard(ctx context.Context, cardID int64) error
 }
 
-const deleteSuccess = "success" // Для Delete ручки
-
-
-type GetCard interface {
-	GetCard(ctx context.Context, req int64) (models.Card, error)
-}
-
-type CreateCard interface {
-	CreateCard(ctx context.Context,  ) (models.Card, error)
-}
-
-type UpdateCard interface {
-	UpdateCard(ctx context.Context, ) (models.Card,  error)
-}
-
-type DeleteCard interface {
-	DeleteCard(ctx context.Context, req int64) (string, error)
+// Бизнес-Логика
+type CardService struct {
+	repo CardRepository // Логика зависит только от интерфейса
 }
 
 //===================================================================================================================//
 
-func (c *CardsService) GetCard(ctx context.Context, req int64) (models.Card, error) {
+// Создание объекта
+func NewService(repo CardRepository) *CardService {
+	return &CardService{
+		repo: repo,
+	}
+}
+
+func (c *CardService) GetCardRepo(ctx context.Context, req int64) (models.Card, error) {
 
 	return models.Card{
 		
 	}, nil
 }
 
-func (c *CardsService) CreateCard() () {
+func (c *CardService) CreateCardRepo() () {
 
 }
 
-func (c *CardsService) UpdadeCard() () {
+func (c *CardService) UpdadeCardRepo() () {
 
 }
 
-func (c *CardsService) DeleteCard() () {
+func (c *CardService) DeleteCard() () {
 
 }

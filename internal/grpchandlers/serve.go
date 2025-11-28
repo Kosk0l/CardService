@@ -1,4 +1,4 @@
-package grpc
+package grpchandlers
 
 // Handlers - grpc
 
@@ -22,7 +22,8 @@ func (s *Server) GetCard(ctx context.Context, req *grpcProto.GetCardRequest) (*g
 		return nil, status.Error(codes.InvalidArgument, "error cardid")
 	}
 
-	//TODO: запуск бизнес-логики
+	// запуск бизнес-логики
+	
 
 	return nil ,nil
 }

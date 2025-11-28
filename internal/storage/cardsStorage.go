@@ -1,4 +1,5 @@
 package storage
+
 // Storage
 
 import (
@@ -12,7 +13,7 @@ import (
 //===================================================================================================================//
 
 // Обратиться к БД для создания новой карточки
-func (p *Postgres) CreateCardPG(ctx context.Context, userid int64, deckid int64, text1 string, text2 string) (int64, error) {
+func (p *Postgres) CreateCard(ctx context.Context, userid int64, deckid int64, text1 string, text2 string) (int64, error) {
 	query := `
 		INSERT INTO cards (user_id, deck_id, text1, text2) VALUES
 		($1, $2, $3, $4)
@@ -25,13 +26,11 @@ func (p *Postgres) CreateCardPG(ctx context.Context, userid int64, deckid int64,
 	}
 	
 	return cardid, nil 
-	// Вернем только id новой карточки, 
-	// Остальную часть структуры ответа взять в слоях выше
 }
 
 
 // Обратиться к Бд собновлением карточки по cardid
-func (p *Postgres) UpdadeCardPG(ctx context.Context, cardid int64, text1 string, text2 string) (int64, int64, int64, string, string, error) {
+func (p *Postgres) UpdadeCard(ctx context.Context, cardid int64, text1 string, text2 string) (int64, int64, int64, string, string, error) {
 	query := `
 		UPDATE cards
 		SET text1 = $1, text2 = $2 
@@ -55,7 +54,7 @@ func (p *Postgres) UpdadeCardPG(ctx context.Context, cardid int64, text1 string,
 
 
 // Получить данные карточки по id
-func (p *Postgres) GetCardPG(ctx context.Context, cardid int64) (int64, int64, string, string, error) {
+func (p *Postgres) GetCard(ctx context.Context, cardid int64) (int64, int64, string, string, error) {
 	query := `
 		SELECT user_id, deck_id, text1, text2 FROM cards WHERE card_id = $1;
 	`
@@ -79,7 +78,7 @@ func (p *Postgres) GetCardPG(ctx context.Context, cardid int64) (int64, int64, s
 }
 
 // Обратиться к Бд для удаления карточки по cardid, возвращаем string ответ
-func (p *Postgres) DeleteCardPG(ctx context.Context, cardid int64) (string, error) {
+func (p *Postgres) DeleteCard(ctx context.Context, cardid int64) (string, error) {
 	query := `
 		DELETE FROM cards WHERE card_id = $1;
 	`
