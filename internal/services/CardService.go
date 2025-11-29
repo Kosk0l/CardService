@@ -30,19 +30,20 @@ func NewService(repo CardRepository) *CardService {
 	}
 }
 
-func (c *CardService) GetCardRepo(ctx context.Context, req int64) ( error) {
-
-	return nil
+// Получение карточки; Бизнес-Логика
+func (c *CardService) GetCardService(ctx context.Context, req int64) (models.Card, error) {
+	return c.repo.GetCard(ctx, req)
 }
 
-func (c *CardService) CreateCardRepo() () {
-
+// Создание карточки; Бизнес-Логика
+func (c *CardService) CreateCardService(ctx context.Context, card models.Card) (int64, error) {
+	return c.repo.CreateCard(ctx, card)
 }
 
-func (c *CardService) UpdadeCardRepo() () {
-
+func (c *CardService) UpdadeCardService(ctx context.Context, card models.Card) (error) {
+	return c.repo.UpdateCard(ctx, card)
 }
 
-func (c *CardService) DeleteCard() () {
-
+func (c *CardService) DeleteCardService(ctx context.Context, req int64) (error) {
+	return c.repo.DeleteCard(ctx, req)
 }
