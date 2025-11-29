@@ -5,12 +5,10 @@ import (
 	"fmt"
 	"time"
 	"github.com/jackc/pgx/v5/pgxpool"
-	"CardService/internal/services"
 )
 
 type Postgres struct {
 	pool *pgxpool.Pool
-	services.CardRepository // Имплемент интерфейса из высокого уровня
 }
 
 // Создание нового соединения к БД
