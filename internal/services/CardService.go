@@ -30,11 +30,9 @@ func NewService(repo CardRepository) *CardService {
 	}
 }
 
-func (c *CardService) GetCardRepo(ctx context.Context, req int64) (models.Card, error) {
+func (c *CardService) GetCardRepo(ctx context.Context, req int64) ( error) {
 
-	return models.Card{
-		
-	}, nil
+	return nil
 }
 
 func (c *CardService) CreateCardRepo() () {
