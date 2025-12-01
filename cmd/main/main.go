@@ -5,7 +5,7 @@ import (
 	"log"
 	"net"
 	"google.golang.org/grpc"
-	grpcServer "CardService/internal/grpchandlers"
+	grpcServer "CardService/internal/grpchandler"
 )
 
 func main() {

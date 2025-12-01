@@ -1,8 +1,10 @@
-package grpchandlers
+package grpchandler
 
 // Handlers - grpc
 
 import (
+	//"CardService/internal/models"
+	"CardService/internal/services"
 	"CardService/proto/grpcProto"
 	"context"
 
@@ -12,6 +14,14 @@ import (
 
 type Server struct {
 	grpcProto.UnimplementedCardServiceServer // наследует генерированные данные
+	service *services.CardService // Объект бизнес-Логики
+}
+
+// Конструктор сервера
+func NewServer(service *services.CardService) *Server {
+	return &Server{
+		service: service,
+	}
 }
 
 //===================================================================================================================//
@@ -22,7 +32,11 @@ func (s *Server) GetCard(ctx context.Context, req *grpcProto.GetCardRequest) (*g
 		return nil, status.Error(codes.InvalidArgument, "error cardid")
 	}
 
-	// запуск бизнес-логики
+	// card := models.Card{
+
+	// }
+
+
 	
 
 	return nil ,nil

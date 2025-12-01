@@ -4,9 +4,11 @@ import (
 	"context"
 	"fmt"
 	"time"
+
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
+// Реализует методы интерфейса CardRepository
 type Postgres struct {
 	pool *pgxpool.Pool
 }
