@@ -8,7 +8,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-// Реализует методы интерфейса CardRepository
+// Реализует методы интерфейса CardRepository (services)
 type Postgres struct {
 	pool *pgxpool.Pool
 }
