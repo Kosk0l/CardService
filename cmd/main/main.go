@@ -1,46 +1,36 @@
 package main
 
 import (
-	"CardService/internal/grpchandler"
-	"CardService/internal/services"
-	"CardService/internal/storage"
-	pb "CardService/proto/grpcProto"
+	"CardService/config"
+	"CardService/internal/app"
 	"context"
 	"log"
-	"net"
-	"google.golang.org/grpc"
+	"os"
+	"os/signal"
+	"syscall"
 )
 
 func main() {
-	// 1. объект подключения к БД (репозиторий)
-    pool, err := storage.NewPostgres(context.Background(), "postgres")
-    if err != nil {
-        log.Fatalf("DB connect error: %v", err)
-    }
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	
+	cfg := config.ConfigUP()
 
-	// Объект storage
-    repo := pool  // repo реализует CardRepository
-
-	// 2. объект Бизнес-логики
-    service := services.NewService(repo)
-
-    // 3. объект gRPC хендлера, зависящий от сервиса
-    handler := grpchandler.NewServer(service)
-
-
-	// Настройка слушателя
-	lis, err := net.Listen("tcp", ":44045")
+	s, err := app.NewApp(ctx, *cfg)
 	if err != nil {
-		log.Fatalf("Error listen server: %v", err)
+		log.Fatalf("Failed to create new App", err)
 	}
 
-	grpcServer := grpc.NewServer()
-    pb.RegisterCardServiceServer(grpcServer, handler)
+	go func() {
+		if err := s.Run(); err != nil {
+			log.Fatalf("server error: %v", err)
+		}
+	}()
 
-    log.Println("gRPC server started on :44045")
+	sig := make(chan os.Signal, 1)
+	signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
+	<- sig
 
-    // 5. Старт сервера
-    if err := grpcServer.Serve(lis); err != nil {
-        log.Fatalf("failed to serve: %v", err)
-    }
+	log.Println("Graceful shut Down")
+	s.Stop()
 }
