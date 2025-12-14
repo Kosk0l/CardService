@@ -18,7 +18,7 @@ func main() {
 
 	s, err := app.NewApp(ctx, *cfg)
 	if err != nil {
-		log.Fatalf("Failed to create new App", err)
+		log.Fatalf("Failed to create new App: %v", err)
 	}
 
 	go func() {
