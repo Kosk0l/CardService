@@ -13,7 +13,7 @@ type App struct {
 	grpc *server.GRPCServer
 }
 
-// Связка компанентов
+// Связка компонентов // Конструктор структуры App
 func NewApp(ctx context.Context, cfg config.Config) (*App, error) {
 	// Объект storage
 	pool, err := storage.NewPostgres(ctx, cfg.DataBaseURL)
