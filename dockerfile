@@ -23,7 +23,7 @@ WORKDIR /app
 COPY --from=builder /app/cardservice /app/cardservice
 
 # 5. Указывает порт
-EXPOSE 8080
+EXPOSE 44044
 
 # 6. Запуск
 CMD ["/app/cardservice"]

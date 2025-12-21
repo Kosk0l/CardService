@@ -1,0 +1,26 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres
+    ports:
+      - 5433:5432
+    environment:
+      POSTGRES_DB: postgres # {POSTGRES_DB} / при CI/CD
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: qwerty
+    # volumes:
+    #   - pgdata:/var/lib/postgresql/data
+  
+  kafka:
+    image: bitnami/kafka:latest
+    ports:
+      - "9092:9092"
+    # environment:
+      
+
+  # backend:
+  #   image: ""
+  #   ports:
+  #     - 44044:44044
+      

@@ -1,36 +1,35 @@
-package config 
+package config
+
 import (
 	"log"
-	"os"
 
-	"github.com/joho/godotenv"
+	"github.com/caarlos0/env/v11"
 )
 
 // Конфиг запуска приложения
 type Config struct {
-	DataBaseURL string
-	GRPCPort 	string
+	App AppConfig
+	DB  DBConfig
 }
 
-func ConfigUP() *Config {
+type AppConfig struct {
+	Port string `env:"PORT" envDefault:"44044"`
+}
 
-	err := godotenv.Load(".env")
-	if err != nil {
-		log.Fatal("error in config up - godotenv")
+type DBConfig struct {
+	Host string `env:"DB_HOST" envDefault:"localhost"`
+	Port string `env:"DB_PORT" envDefault:"5432"`
+	User string `env:"DB_USER,required"`
+	Pass string `env:"DB_PASS,required"`
+	Name string `env:"DB_NAME,required"`
+}
+
+func Load() *Config {
+
+	cfg := Config{}
+	if err := env.Parse(&cfg); err != nil {
+		log.Fatal(err)
 	}
 
-	cfg := &Config{
-		DataBaseURL: os.Getenv("DB"),
-		GRPCPort: os.Getenv("PORT"),
-	}
-
-	if cfg.DataBaseURL == "" {
-		log.Fatal("database url is bad")
-	}
-
-	if cfg.GRPCPort == "" {
-		log.Fatal("grpcport is bad")
-	}
-
-	return cfg
+	return &cfg
 }

@@ -11,12 +11,15 @@ import (
 )
 
 func main() {
+	// создание котекста
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	
-	cfg := config.ConfigUP()
+	// Запуск конфига
+	cfg := config.Load()
 
-	s, err := app.NewApp(ctx, *cfg)
+	// запуск связки компонентов
+	s, err := app.NewApp(ctx, cfg)
 	if err != nil {
 		log.Fatalf("Failed to create new App: %v", err)
 	}
