@@ -7,8 +7,10 @@ services:
       - 5433:5432
     environment:
       POSTGRES_DB: postgres # {POSTGRES_DB} / при CI/CD
-      POSTGRES_USER: user
+      POSTGRES_USER: postgres
       POSTGRES_PASSWORD: qwerty
+      POSTGRES_HOST: localhost
+      POSTGRES_SSLMODE: disable
     # volumes:
     #   - pgdata:/var/lib/postgresql/data
   
